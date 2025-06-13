@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Download } from 'lucide-react';
 
 function DataTable({ theme }) {
   const tableBgClass = theme === 'dark' ? 'bg-gray-800' : 'bg-white';
@@ -80,9 +80,44 @@ function DataTable({ theme }) {
     }
   }, []);
 
+  const exportToCsv = useCallback(() => {
+    const headers = Object.keys(initialProducts[0]);
+    const csvContent = [
+      headers.join(','),
+      ...products.map(row => headers.map(fieldName => JSON.stringify(row[fieldName])).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) { // Feature detection
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'products_table.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      console.error("Browser does not support download attribute. Cannot export CSV.");
+      // Fallback for older browsers if needed, e.g., open in new window
+      const url = URL.createObjectURL(blob);
+      window.open(url);
+    }
+  }, [products, initialProducts]);
+
   return (
     <div className={`p-4 rounded-lg w-full max-w-full mx-auto flex flex-col space-y-6`}>
-      <h2 className={`text-3xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Products Inventory</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Products Inventory</h2>
+        <button
+          onClick={exportToCsv}
+          className={`px-4 py-2 rounded-md font-semibold transition-colors duration-200 flex items-center space-x-2
+            ${theme === 'dark' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-green-700 hover:bg-green-800 text-white'}`}
+        >
+          <Download size={20} />
+          <span>Export to CSV</span>
+        </button>
+      </div>
       <p className={`mb-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
         This table demonstrates per-column filtering, pagination, and action buttons.
         You can search within each column and control the number of rows displayed.
@@ -146,7 +181,6 @@ function DataTable({ theme }) {
         </table>
       </div>
 
-      {/* Pagination Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 p-4 rounded-lg shadow-md bg-opacity-70 backdrop-blur-sm"
            style={{ backgroundColor: theme === 'dark' ? 'rgba(31, 41, 55, 0.7)' : 'rgba(243, 244, 246, 0.7)' }}>
         <div className="flex items-center space-x-2">
