@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Documentation: Responsive React Dashboard & Web Application</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        /* Custom scrollbar for better appearance */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0; /* Light gray for light theme */
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #2d3748; /* Darker gray for dark theme */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a0aec0; /* Medium gray */
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #4a5568; /* Darker medium gray */
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #718096; /* Darker on hover */
+        }
+        .dark ::::-webkit-scrollbar-thumb:hover {
+            background: #636b77; /* Even darker on hover */
+        }
+        html.dark body {
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text */
+        }
+        html.light body {
+            background-color: #f7fafc; /* Light background */
+            color: #2d3748; /* Dark text */
+        }
+
+        /* Basic styling for code blocks in markdown */
+        pre {
+            background-color: #f7fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+        .dark pre {
+            background-color: #2d3748;
+            color: #e2e8f0;
+        }
+        code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            background-color: #edf2f7;
+            padding: 0.2em 0.4em;
+            border-radius: 0.25rem;
+            font-size: 0.875em;
+            color: #4a5568;
+        }
+        .dark code {
+            background-color: #4a5568;
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body class="transition-colors duration-300 ease-in-out">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header for documentation page (Updated for smaller size) -->
+        <header class="bg-blue-700 dark:bg-blue-900 text-white p-4 shadow-lg">
+            <div class="max-w-6xl mx-auto flex justify-between items-center">
+                <h1 class="text-2xl font-bold">Project Documentation</h1>
+                <button id="theme-toggle" class="p-2 rounded-md hover:bg-blue-600 dark:hover:bg-blue-800 transition-colors duration-200" aria-label="Toggle theme">
+                    <svg id="sun-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M3 12h1m15.325-7.464l-.707.707M4.372 19.091l-.707.707m13.397.707l.707-.707M4.372 4.909l.707-.707"></path></svg>
+                    <svg id="moon-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="max-w-6xl mx-auto p-8 flex-grow grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Table of Contents Sidebar -->
+            <aside class="lg:col-span-1 sticky top-0 h-fit rounded-lg shadow-md p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Table of Contents</h2>
+                <nav>
+                    <ul class="space-y-1">
+                        <li><a href="#project-overview" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200">Project Overview</a></li>
+                        <li><a href="#core-abilities" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Core Abilities</a></li>
+                        <li><a href="#unique-features" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Unique Features</a></li>
+                        <li><a href="#tailwind-css-usage" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200">Tailwind CSS Usage</a></li>
+                        <li><a href="#layout-spacing" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Layout & Spacing</a></li>
+                        <li><a href="#colors-theming" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Colors & Theming</a></li>
+                        <li><a href="#typography" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Typography</a></li>
+                        <li><a href="#borders-shadows" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Borders & Shadows</a></li>
+                        <li><a href="#transitions-animations" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Transitions & Animations</a></li>
+                        <li><a href="#responsiveness" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Responsiveness</a></li>
+                        <li><a href="#form-elements" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Form Elements</a></li>
+                        <li><a href="#interactivity-misc" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Interactivity & Misc</a></li>
+                        <li><a href="#icons-charts" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Icons & Charts</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="lg:col-span-3 space-y-10">
+                <!-- Project Overview -->
+                <section id="project-overview" class="p-8 rounded-lg shadow-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">Project Overview: Responsive React Dashboard & Web Application</h2>
+                    <p class="text-lg mb-6 text-gray-700 dark:text-gray-300">
+                        This project is a comprehensive single-page application built with React, designed to showcase a modern, responsive, and highly interactive user interface. It provides a foundational structure for web applications that require user authentication, data visualization, dynamic content management, and robust UI components. The application leverages a utility-first CSS framework, ensuring a consistent and adaptive design across various devices.
+                    </p>
+
+                    <h3 id="core-abilities" class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Core Abilities</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                        <li><strong>User Authentication:</strong> Includes fully functional Login and Signup pages with input validation, demonstrating secure user entry points.</li>
+                        <li><strong>Responsive Layout:</strong> Features a dynamic sidebar and header that adapt seamlessly to different screen sizes (mobile, tablet, desktop).</li>
+                        <li><strong>Customizable Dashboard:</strong> A highly interactive dashboard allows users to drag-and-drop widgets (metrics, various chart types) to personalize their layout. The layout preferences are persisted locally.</li>
+                        <li><strong>Calendar Management:</strong> A robust calendar component enables local event creation, editing, and deletion. It also offers direct integration with Google Calendar API for syncing events (requires Google API key setup).</li>
+                        <li><strong>Dynamic Data Tables:</strong> Demonstrates various data table functionalities, including static displays, sortable columns, and per-column filtering for efficient data navigation.</li>
+                        <li><strong>Products Inventory Table:</strong> A specialized table for product management with features like pagination, per-column filtering, and options for CSV import and export of product data.</li>
+                        <li><strong>UI Components Showcase:</strong> Dedicated pages illustrating reusable UI components such as diverse card layouts (basic, with images, with actions, stats, features, testimonials) and a versatile tab system.</li>
+                        <li><strong>Button Styles Showcase:</strong> A comprehensive display of various button styles, including solid, outline, and ghost variants in multiple colors and sizes, with and without icons.</li>
+                        <li><strong>Contact Us Page:</strong> A practical contact form with basic validation and a Google Maps embed for location display.</li>
+                        <li><strong>Interactive Chat Bubble:</strong> A floating chat icon at the bottom-right of the page opens a simulated chat window, providing an example of an in-app support or communication feature.</li>
+                    </ul>
+
+                    <h3 id="unique-features" class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Unique Features</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                        <li><strong>Drag-and-Drop Dashboard:</strong> Empowering users to organize their dashboard widgets provides a truly personalized experience, with state saved in local storage.</li>
+                        <li><strong>Dynamic Theming:</strong> A global light/dark mode toggle allows users to switch between themes, with all UI components dynamically adjusting their appearance.</li>
+                        <li><strong>Google Calendar Integration:</strong> Direct API integration for fetching and displaying Google Calendar events, streamlining external data into the application's calendar.</li>
+                        <li><strong>Data Import/Export:</strong> The products table includes functionality to import data from a CSV file and export current table data to a CSV, demonstrating practical data management.</li>
+                        <li><strong>Fully Responsive Design:</strong> The entire application is built with a mobile-first approach, ensuring optimal viewing and interaction on any device size.</li>
+                        <li><strong>Modular React Components:</strong> The project emphasizes a component-based architecture, promoting reusability, maintainability, and scalability.</li>
+                        <li><strong>Simulated Live Chat:</strong> The floating chat bubble offers a ready-to-use foundation for implementing customer support or internal communication features.</li>
+                    </ul>
+                </section>
+
+                <!-- Tailwind CSS Documentation -->
+                <section id="tailwind-css-usage" class="p-8 rounded-lg shadow-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">Tailwind CSS Usage</h2>
+                    <p class="text-lg mb-6 text-gray-700 dark:text-gray-300">
+                        This project extensively uses <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline dark:text-blue-400">Tailwind CSS</a>, a utility-first CSS framework. Tailwind enables rapid UI development by providing low-level utility classes directly in the HTML (or JSX in this React project). This approach promotes consistency, minimizes custom CSS, and simplifies maintenance.
+                    </p>
+                    <p class="text-lg mb-6 text-gray-700 dark:text-gray-300">
+                        For simplicity in this single HTML file, Tailwind is included via its CDN. In a real-world development setup, you would typically install Tailwind via npm/yarn and configure it using <code>tailwind.config.js</code> to enable features like purging unused styles, custom themes, and plugins.
+                    </p>
+
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Key Tailwind Utility Classes Used:</h3>
+
+                    <h4 id="layout-spacing" class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Layout & Spacing</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                        <li><code>flex</code>, <code>inline-flex</code>: For creating flex containers.</li>
+                        <li><code>flex-col</code>, <code>flex-row</code>: To define flex direction.</li>
+                        <li><code>justify-start</code>, <code>justify-end</code>, <code>justify-center</code>, <code>justify-between</code>: Horizontal alignment in flex containers.</li>
+                        <li><code>items-start</code>, <code>items-end</code>, <code>items-center</code>: Vertical alignment in flex containers.</li>
+                        <li><code>grid</code>, <code>grid-cols-*</code>, <code>gap-*</code>: For CSS Grid layouts.</li>
+                        <li><code>space-x-*</code>, <code>space-y-*</code>: Adding space between child elements.</li>
+                        <li><code>w-full</code>, <code>h-screen</code>, <code>min-h-screen</code>: Width and height utilities.</li>
+                        <li><code>max-w-7xl</code>, <code>mx-auto</code>: For creating centered, constrained containers.</li>
+                        <li><code>fixed</code>, <code>relative</code>, <code>absolute</code>, <code>inset-0</code>: For positioning elements.</li>
+                        <li><code>overflow-hidden</code>, <code>overflow-y-auto</code>: Handling content overflow.</li>
+                    </ul>
+
+                    <h4 id="colors-theming" class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Colors & Theming</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                        <li><code>bg-*</code>: Background colors (e.g., <code>bg-gray-900</code>, <code>bg-blue-700</code>).</li>
+                        <li><code>text-*</code>: Text colors (e.g., <code>text-white</code>, <code>text-gray-200</code>).</li>
+                        <li><code>border-*</code>: Border colors.</li>
+                        <li><code>bg-opacity-*</code>: Control background opacity (e.g., <code>bg-black opacity-70</code>).</li>
+                        <li><strong>Dynamic Theming:</strong> The application uses conditional rendering of Tailwind classes based on the React `theme` state (e.g., <code>{`theme === 'dark' ? 'bg-gray-800' : 'bg-white'`}</code>) to achieve light and dark mode. The root `html` element is dynamically toggled with `dark` or `light` class.</li>
+                    </ul>
+
+                    <h4 id="typography" class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Typography</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                        <li><code>text-sm</code>, <code>text-base</code>, <code>text-lg</code>, <code>text-xl</code>, etc.: Font sizes.</li>
+                        <li><code>font-light</code>, <code>font-normal</code>, <code>font-medium</code>, <code>font-semibold</code>, <code>font-bold</code>, <code>font-extrabold</code>: Font weights.</li>
+                        <li><code>text-center</code>, <code>text-left</code>, <code>text-right</code>: Text alignment.</li>
+                        <li><code>uppercase</code>, <code>lowercase</code>, <code>capitalize</code>: Text transformations.</li>
+                        <li><code>whitespace-nowrap</code>, <code>overflow-hidden</code>, <code>text-ellipsis</code>: Handling long text.</li>
+                    </ul>
+
+                    <h4 id="borders-shadows" class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Borders & Shadows</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                        <li><code>rounded-*</code>: Border radius (e.g., <code>rounded-lg</code>, <code>rounded-full</code>).</li>
+                        <li><code>border</code>, <code>border-2</code>, <code>border-b</code>, etc.: Border widths and sides.</li>
+                        <li><code>shadow-md</code>, <code>shadow-lg</code>, <code>shadow-xl</code>, <code>shadow-2xl</code>: Box shadows for depth.</li>
+                        <li><code>shadow-blue-500/50</code>: Custom colored shadows with opacity.</li>
+                    </ul>
+
+                    <h4 id="transitions-animations" class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Transitions & Animations</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                        <li><code>transition-all</code>, <code>transition-colors</code>, <code>transition-transform</code>: Applying transitions to all or specific properties.</li>
+                        <li><code>duration-*</code>: Transition duration (e.g., <code>duration-300</code>).</li>
+                        <li><code>ease-in-out</code>: Transition timing function.</li>
+                        <li><code>hover:bg-*</code>, <code>hover:text-*</code>, <code>hover:shadow-*</code>, <code>hover:underline</code>: Hover effects.</li>
+                        <li><code>transform</code>, <code>scale-*</code>, <code>rotate-*</code>: Transform utilities for animations (e.g., chat bubble pop-up).</li>
+                    </ul>
+
+                    <h4 id="responsiveness" class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Responsiveness</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                        <li><strong>Breakpoints:</strong> Utilizes Tailwind's default breakpoints (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`). For instance, `md:grid-cols-2` means 2 columns on medium screens and up.</li>
+                        <li><code>hidden</code>, <code>block</code>: Controlling element visibility at different breakpoints (e.g., mobile menu).</li>
+                        <li>Fluid units (`%`, `vw`, `rem`) are inherently supported by Tailwind's utility classes (e.g., `w-full`, `p-8`).</li>
+                    </ul>
+
+                    <h4 id="form-elements" class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Form Elements</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                        <li><code>focus:outline-none</code>, <code>focus:ring-2</code>, <code>focus:ring-blue-500</code>, <code>focus:border-blue-700</code>: Customizing focus states for accessibility and aesthetics.</li>
+                        <li>Standard `input`, `textarea`, `select` elements are styled using combinations of `w-full`, `p-*`, `rounded-md`, `border`, `bg-*`, `text-*` classes.</li>
+                    </ul>
+
+                    <h4 id="interactivity-misc" class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Interactivity & Miscellaneous</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                        <li><code>cursor-pointer</code>, <code>cursor-grab</code>, <code>active:cursor-grabbing</code>: Customizing cursor types for interactive elements.</li>
+                        <li><code>select-none</code>: Prevents text selection.</li>
+                        <li><code>flex-grow</code>, <code>flex-shrink-0</code>: Flex item sizing.</li>
+                        <li><code>z-10</code>, <code>z-50</code>: Z-index for layering elements.</li>
+                        <li><code>backdrop-blur-sm</code>: Applies a blur effect to the background, used on pagination.</li>
+                    </ul>
+
+                    <h4 id="icons-charts" class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Icons & Charts</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                        <li><strong>Icons (Lucide React):</strong> The project uses <a href="https://lucide.dev/icons/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline dark:text-blue-400">Lucide React</a> for vector icons. These icons are integrated as React components (e.g., <code>&lt;Home size={20} /&gt;</code>) and their size and color are controlled directly via Tailwind classes (e.g., <code>text-blue-400</code>, <code>w-6 h-6</code>). Dynamic icon colors are applied based on the theme.</li>
+                        <li><strong>Charts (Chart.js):</strong> Data visualizations are powered by <a href="https://www.chartjs.org/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline dark:text-blue-400">Chart.js</a>. The charts are rendered within HTML <code>&lt;canvas&gt;</code> elements. Tailwind is used for the overall container sizing (e.g., <code>w-full h-80</code>) and padding. The chart's internal elements (text, grid lines, data points, backgrounds) are dynamically styled using JavaScript within the Chart.js configuration, referencing the current theme to ensure visual consistency. This includes distinct color palettes for light and dark modes.</li>
+                        <li><strong>IconMap for Dynamic Icons:</strong> For dashboard metric cards, icon names are stored as strings. A JavaScript `IconMap` object (`const IconMap = { DollarSign: DollarSign, ... };`) is used to dynamically look up and render the corresponding Lucide React component based on the string name, allowing for data-driven icon display.</li>
+                    </ul>
+
+                    <p class="text-lg mt-6 text-gray-700 dark:text-gray-300">
+                        By combining these utility classes, the project achieves a clean, modern, and highly adaptable user interface with minimal custom CSS, showcasing the power and flexibility of Tailwind CSS.
+                    </p>
+                </section>
+            </main>
+        </div>
+
+        <!-- Footer for documentation page -->
+        <footer class="bg-blue-700 dark:bg-blue-900 text-white p-4 text-center shadow-inner mt-8">
+            <p>&copy; 2024 Your Company. All rights reserved. Documentation built with Tailwind CSS.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle logic for the documentation page
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const htmlElement = document.documentElement;
+
+        // Function to set theme
+        const setTheme = (newTheme) => {
+            if (newTheme === 'dark') {
+                htmlElement.classList.add('dark');
+                htmlElement.classList.remove('light');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                htmlElement.classList.remove('dark');
+                htmlElement.classList.add('light');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+            localStorage.setItem('doc-theme', newTheme);
+        };
+
+        // Initialize theme on load
+        const savedTheme = localStorage.getItem('doc-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        setTheme(savedTheme);
+
+        // Toggle theme on button click
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = htmlElement.classList.contains('dark') ? 'dark' : 'light';
+            setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        });
+    </script>
+</body>
+</html>

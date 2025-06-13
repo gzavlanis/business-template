@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { Edit, Trash2, Download } from 'lucide-react';
+import { useState, useCallback, useRef } from 'react';
+import { Edit, Trash2, Download, Upload } from 'lucide-react';
 
 function DataTable({ theme }) {
   const tableBgClass = theme === 'dark' ? 'bg-gray-800' : 'bg-white';
@@ -35,6 +35,8 @@ function DataTable({ theme }) {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [importStatus, setImportStatus] = useState(null);
+  const importFileInputRef = useRef(null);
 
   const handleFilterChange = useCallback((column, value) => {
     setColumnFilters(prevFilters => ({
@@ -105,19 +107,128 @@ function DataTable({ theme }) {
     }
   }, [products, initialProducts]);
 
+  const handleImportClick = useCallback(() => {
+    importFileInputRef.current.click();
+  }, []);
+
+  const handleImport = useCallback((event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      setImportStatus({ type: 'error', message: 'No file selected.' });
+      return;
+    }
+
+    // Only allow CSV for now due to complexity of Excel parsing without libraries
+    if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+      setImportStatus({ type: 'error', message: 'Invalid file type. Please upload a CSV file. (Excel files require additional libraries for parsing)' });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target.result;
+      try {
+        const lines = text.split('\n').filter(line => line.trim() !== ''); // Filter out empty lines
+        if (lines.length === 0) {
+          setImportStatus({ type: 'error', message: 'CSV file is empty.' });
+          return;
+        }
+
+        const headers = lines[0].split(',').map(header => header.trim().toLowerCase());
+        const importedData = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          const values = lines[i].split(',').map(value => value.trim());
+          if (values.length !== headers.length) {
+            console.warn(`Skipping row ${i + 1} due to column mismatch:`, lines[i]);
+            continue; // Skip rows that don't match header count
+          }
+          const rowObject = {};
+          headers.forEach((header, index) => {
+            let value = values[index];
+            // Attempt to convert to number if applicable
+            if (header === 'id' || header === 'price' || header === 'stock') {
+              value = Number(value);
+              if (isNaN(value)) {
+                console.warn(`Invalid number for ${header} at row ${i + 1}. Keeping as string.`);
+              }
+            }
+            rowObject[header] = value;
+          });
+          importedData.push(rowObject);
+        }
+
+        // Simple validation: check if imported data has at least the required keys
+        const requiredKeys = ['id', 'name', 'category', 'price', 'stock'];
+        const isValid = importedData.every(row => requiredKeys.every(key => Object.keys(row).includes(key)));
+
+        if (isValid && importedData.length > 0) {
+          // Assign new unique IDs to imported items to avoid conflicts, or handle merging
+          const maxExistingId = Math.max(...products.map(p => p.id), 0);
+          const newProducts = importedData.map((item, index) => ({
+            ...item,
+            id: item.id || (maxExistingId + 1 + index), // Use existing ID or generate new
+            price: Number(item.price) || 0, // Ensure price is number
+            stock: Number(item.stock) || 0 // Ensure stock is number
+          }));
+          setProducts(prevProducts => [...prevProducts, ...newProducts]);
+          setImportStatus({ type: 'success', message: `Successfully imported ${newProducts.length} new products.` });
+        } else {
+          setImportStatus({ type: 'error', message: 'Imported CSV data is invalid or empty after parsing. Please check file format.' });
+        }
+      } catch (parseError) {
+        setImportStatus({ type: 'error', message: `Error parsing CSV file: ${parseError.message}` });
+        console.error("CSV parsing error:", parseError);
+      }
+    };
+
+    reader.onerror = () => {
+      setImportStatus({ type: 'error', message: 'Failed to read file.' });
+    };
+
+    reader.readAsText(file);
+    // Clear the input value so the same file can be selected again after a failed import
+    if (importFileInputRef.current) {
+        importFileInputRef.current.value = '';
+    }
+  }, [products]);
+
   return (
     <div className={`p-4 rounded-lg w-full max-w-full mx-auto flex flex-col space-y-6`}>
       <div className="flex justify-between items-center mb-4">
         <h2 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Products Inventory</h2>
-        <button
-          onClick={exportToCsv}
-          className={`px-4 py-2 rounded-md font-semibold transition-colors duration-200 flex items-center space-x-2
-            ${theme === 'dark' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-green-700 hover:bg-green-800 text-white'}`}
-        >
-          <Download size={20} />
-          <span>Export to CSV</span>
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={exportToCsv}
+            className={`px-4 py-2 rounded-md font-semibold transition-colors duration-200 flex items-center space-x-2
+              ${theme === 'dark' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-green-700 hover:bg-green-800 text-white'}`}
+          >
+            <Download size={20} />
+            <span>Export to CSV</span>
+          </button>
+          <input
+            type="file"
+            ref={importFileInputRef}
+            onChange={handleImport}
+            className="hidden"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" // .csv and basic Excel (XLSX, XLS)
+            aria-label="Upload CSV or Excel file"
+          />
+          <button
+            onClick={handleImportClick}
+            className={`px-4 py-2 rounded-md font-semibold transition-colors duration-200 flex items-center space-x-2
+              ${theme === 'dark' ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-purple-700 hover:bg-purple-800 text-white'}`}
+          >
+            <Upload size={20} />
+            <span>Import Data</span>
+          </button>
+        </div>
       </div>
+      {importStatus && (
+        <div className={`p-3 rounded-md text-sm ${importStatus.type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}`}>
+          {importStatus.message}
+        </div>
+      )}
       <p className={`mb-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
         This table demonstrates per-column filtering, pagination, and action buttons.
         You can search within each column and control the number of rows displayed.

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { LogOut, User, UserIcon } from "lucide-react";
+import { LogOut, UserIcon } from "lucide-react";
 
 import SignIn from "./components/Authentication/SignIn";
 import SignUp from "./components/Authentication/SignUp";
@@ -14,6 +14,8 @@ import SimpleTables from "./components/Tables/SimpleTables";
 import DataTable from "./components/Tables/DataTable";
 import Components from "./components/Cards/Components";
 import Buttons from "./components/Buttons/Buttons";
+import Contact from "./components/Contact/Contact";
+import Chat from "./components/Chat/Chat";
 
 function App() {
   // 1. Central Theme State: This is the single source of truth for the theme.
@@ -118,6 +120,11 @@ function App() {
     setCurrentPage('buttons');
   }, []);
 
+  const handleNavigateToContact = useCallback((e) => {
+    e.preventDefault();
+    setCurrentPage('contact');
+  }, []);
+
   // Dynamic classes for the overall App background based on the central theme state
   const appThemeClasses = theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900";
 
@@ -152,6 +159,7 @@ function App() {
             <div className="flex-grow"></div> {/* Push footer to bottom */}
             <HomeFooter theme={theme} />
           </main>
+          <Chat theme={theme} />
         </>
       )}
       {currentPage === "dashboard" && (
@@ -170,6 +178,7 @@ function App() {
             onNavigateToProductTable={handleNavigateToProductTable}
             onNavigateToComponents={handleNavigateToComponents}
             onNavigateToButtons={handleNavigateToButtons}
+            onNavigateToContact={handleNavigateToContact}
           />
           <main className={`flex-1 p-8 pt-20 overflow-y-auto transition-all duration-300 ease-in-out flex flex-col`}>
             {/* Dashboard Title, Profile Button and Logout Button */}
@@ -202,6 +211,7 @@ function App() {
             <div className="flex-grow"></div>
             <Footer theme={theme} />
           </main>
+          <Chat theme={theme} />
         </>
       )}
       {currentPage === 'calendar' && (
@@ -221,6 +231,7 @@ function App() {
             onNavigateToProductTable={handleNavigateToProductTable}
             onNavigateToComponents={handleNavigateToComponents}
             onNavigateToButtons={handleNavigateToButtons}
+            onNavigateToContact={handleNavigateToContact}
           />
           <main className={`flex-1 p-8 pt-20 overflow-y-auto transition-all duration-300 ease-in-out flex flex-col`}>
             <Calendar theme={theme} />
@@ -246,6 +257,7 @@ function App() {
             hideThemeToggle={false}
             onNavigateToComponents={handleNavigateToComponents}
             onNavigateToButtons={handleNavigateToButtons}
+            onNavigateToContact={handleNavigateToContact}
           />
           <main className={`flex-1 p-8 mt-[64px] overflow-y-auto transition-all duration-300 ease-in-out flex flex-col min-h-[calc(100vh-64px)]`}>
             <SimpleTables theme={theme} />
@@ -271,7 +283,7 @@ function App() {
             hideThemeToggle={false}
             onNavigateToComponents={handleNavigateToComponents}
             onNavigateToButtons={handleNavigateToButtons}
-
+            onNavigateToContact={handleNavigateToContact}
           />
           <main className={`flex-1 p-8 mt-[64px] overflow-y-auto transition-all duration-300 ease-in-out flex flex-col min-h-[calc(100vh-64px)]`}>
             <DataTable theme={theme} />
@@ -298,6 +310,7 @@ function App() {
             onNavigateToProductTable={handleNavigateToProductTable}
             onNavigateToComponents={handleNavigateToComponents}
             onNavigateToButtons={handleNavigateToButtons}
+            onNavigateToContact={handleNavigateToContact}
           />
           <main className={`flex-1 p-8 mt-[64px] overflow-y-auto transition-all duration-300 ease-in-out flex flex-col min-h-[calc(100vh-64px)]`}>
             <Components theme={theme} />
@@ -323,11 +336,38 @@ function App() {
             onNavigateToProductTable={handleNavigateToProductTable}
             onNavigateToComponents={handleNavigateToComponents}
             onNavigateToButtons={handleNavigateToButtons}
+            onNavigateToContact={handleNavigateToContact}
           />
           <main className={`flex-1 p-8 mt-[64px] overflow-y-auto transition-all duration-300 ease-in-out flex flex-col min-h-[calc(100vh-64px)]`}>
             <Buttons theme={theme} />
             <div className="flex-grow"></div>
             <Footer theme={theme} />
+          </main>
+        </>
+      )}
+      {currentPage === 'contact' && (
+        <>
+          <Sidebar
+            theme={theme}
+            isSidebarExpanded={isSidebarExpanded}
+            onToggleSidebar={toggleSidebar}
+            isLargeScreen={isLargeScreen}
+            openSubmenus={openSubmenus}
+            onToggleSubmenu={toggleSubmenu}
+            onNavigateToDashboard={handleNavigateToDashboard}
+            onNavigateToCalendar={handleNavigateToCalendar} // Pass to sidebar
+            onThemeChange={handleThemeToggle}
+            hideThemeToggle={false} // Show theme toggle in sidebar for calendar page
+            onNavigateToDataTables={handleNavigateToDataTables}
+            onNavigateToProductTable={handleNavigateToProductTable}
+            onNavigateToComponents={handleNavigateToComponents}
+            onNavigateToButtons={handleNavigateToButtons}
+            onNavigateToContact={handleNavigateToContact}
+          />
+          <main className={`flex-1 p-8 mt-[64px] overflow-y-auto transition-all duration-300 ease-in-out flex flex-col min-h-[calc(100vh-64px)]`}>
+            <Contact theme={theme} />
+            <div className="flex-grow"></div>
+            <HomeFooter theme={theme} />
           </main>
         </>
       )}

@@ -19,7 +19,8 @@ import {
   Table,
   Columns,
   LayoutGrid,
-  MousePointer2
+  MousePointer2,
+  MapPin
 } from "lucide-react";
 
 function Sidebar({
@@ -35,7 +36,8 @@ function Sidebar({
   onNavigateToDataTables,
   onNavigateToProductTable,
   onNavigateToComponents,
-  onNavigateToButtons
+  onNavigateToButtons,
+  onNavigateToContact
 }) {
   // Dynamic Tailwind CSS Classes (based on the 'theme' prop)
   const sidebarThemeClasses = theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-200 text-gray-900";
@@ -89,6 +91,7 @@ function Sidebar({
     { icon: Columns, text: 'Products Table', onClick: onNavigateToProductTable },
     { icon: LayoutGrid, text: 'Components', onClick: onNavigateToComponents },
     { icon: MousePointer2, text: 'Buttons', onClick: onNavigateToButtons },
+    { icon: MapPin, text: 'Contact Us', onClick: onNavigateToContact },
   ];
 
   return (
