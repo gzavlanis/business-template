@@ -107,6 +107,9 @@
                         <li><a href="#form-elements" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Form Elements</a></li>
                         <li><a href="#interactivity-misc" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Interactivity & Misc</a></li>
                         <li><a href="#icons-charts" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Icons & Charts</a></li>
+                        <li><a href="#deployment-self-hosting" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200">Deployment & Self-Hosting</a></li>
+                        <li><a href="#dockerization" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">Dockerization</a></li>
+                        <li><a href="#gitlab-ci-cd" class="block py-1 px-2 rounded-md text-blue-600 hover:underline hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700 transition-colors duration-200 ml-4">GitLab CI/CD for Automation</a></li>
                     </ul>
                 </nav>
             </aside>
@@ -238,6 +241,66 @@
 
                     <p class="text-lg mt-6 text-gray-700 dark:text-gray-300">
                         By combining these utility classes, the project achieves a clean, modern, and highly adaptable user interface with minimal custom CSS, showcasing the power and flexibility of Tailwind CSS.
+                    </p>
+                </section>
+
+                <!-- Deployment & Self-Hosting Documentation -->
+                <section id="deployment-self-hosting" class="p-8 rounded-lg shadow-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">Deployment & Self-Hosting</h2>
+                    <p class="text-lg mb-6 text-gray-700 dark:text-gray-300">
+                        This section outlines the process of containerizing your React application using Docker and automating its build and deployment with GitLab CI/CD. This approach ensures consistent environments, simplifies deployment, and enables continuous delivery practices.
+                    </p>
+
+                    <h3 id="dockerization" class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Dockerization</h3>
+                    <p class="text-lg mb-4 text-gray-700 dark:text-gray-300">
+                        The project includes a <code>Dockerfile</code> that describes how to build a Docker image for your React application. This image contains your compiled React app and an Nginx server configured to serve the static files.
+                    </p>
+                    <p class="text-lg mb-4 text-gray-700 dark:text-gray-300">
+                        The <code>Dockerfile</code> uses a multi-stage build process for efficiency:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                        <li><strong>Stage 1 (<code>node:20-alpine</code>):</strong> Builds the React application. It installs dependencies, copies your source code, and runs <code>npm run build</code> to generate the optimized production assets.</li>
+                        <li><strong>Stage 2 (<code>nginx:alpine</code>):</strong> Serves the application. It copies the Nginx configuration, removes default Nginx content, and then copies the build output from Stage 1 into the Nginx web root.</li>
+                    </ul>
+                    <p class="text-lg mb-4 text-gray-700 dark:text-gray-300">
+                        The associated <code>nginx.conf</code> file is critical for client-side routing (e.g., React Router). It ensures that all requests are directed to <code>index.html</code>, allowing your React application to handle the routing internally.
+                    </p>
+                    <p class="text-lg mb-4 text-gray-700 dark:text-gray-300">
+                        To build the Docker image locally, navigate to your project's root directory (where <code>Dockerfile</code> and <code>nginx.conf</code> are located) and run:
+                    </p>
+                    <pre><code class="language-bash">docker build -t my-react-dashboard:latest .</code></pre>
+                    <p class="text-lg mb-6 text-gray-700 dark:text-gray-300">
+                        To run the Docker container locally:
+                    </p>
+                    <pre><code class="language-bash">docker run -p 80:80 --name my-dashboard-app -d my-react-dashboard:latest</code></pre>
+                    <p class="text-lg text-gray-700 dark:text-gray-300">
+                        You can then access your application in a web browser at <code>http://localhost</code>.
+                    </p>
+
+                    <h3 id="gitlab-ci-cd" class="text-2xl font-semibold mb-4 mt-8 text-gray-900 dark:text-white">GitLab CI/CD for Automation</h3>
+                    <p class="text-lg mb-4 text-gray-700 dark:text-gray-300">
+                        The <code>.gitlab-ci.yml</code> file defines a GitLab CI/CD pipeline to automate the build and deployment process.
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                        <li><strong>Build Image Stage:</strong> This stage builds the Docker image and pushes it to your GitLab Container Registry (or any other configured registry). It leverages Docker-in-Docker (dind) for building.</li>
+                        <li><strong>Deploy Stage (Manual):</strong> This is an example deployment stage that uses SSH to connect to a production server, pulls the latest Docker image, stops any existing container, removes it, and then runs a new container. This stage is set to be manually triggered for production deployments.</li>
+                    </ul>
+                    <p class="text-lg mb-4 text-gray-700 dark:text-gray-300">
+                        Before using the GitLab CI/CD file, ensure you have:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                        <li><strong>GitLab Project:</strong> Your project hosted on GitLab.</li>
+                        <li><strong>Container Registry:</strong> Enabled for your GitLab project (or configure an external one).</li>
+                        <li><strong>CI/CD Variables:</strong> Set the following variables in your GitLab project's **Settings &gt; CI/CD &gt; Variables**:
+                            <ul class="list-circle list-inside ml-4 space-y-1">
+                                <li><code>SSH_PRIVATE_KEY</code>: The private key for SSH access to your deployment server (Type: `File`).</li>
+                                <li><code>PRODUCTION_SERVER_USER</code>: The username for SSH access to your production server.</li>
+                                <li><code>PRODUCTION_SERVER_IP</code>: The IP address or hostname of your production server.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p class="text-lg mb-4 text-gray-700 dark:text-gray-300">
+                        Pushing changes to your <code>main</code> branch will automatically trigger the image build. You can then manually trigger the deployment from the GitLab CI/CD pipeline view.
                     </p>
                 </section>
             </main>

@@ -238,6 +238,7 @@ function App() {
             <div className="flex-grow"></div>
             <Footer theme={theme} />
           </main>
+          <Chat theme={theme} />
         </>
       )}
       {currentPage === 'data-tables' && (
@@ -264,6 +265,7 @@ function App() {
             <div className="flex-grow"></div>
             <Footer theme={theme} />
           </main>
+          <Chat theme={theme} />
         </>
       )}
       {currentPage === 'product-table' && (
@@ -290,6 +292,7 @@ function App() {
             <div className="flex-grow"></div>
             <Footer theme={theme} />
           </main>
+          <Chat theme={theme} />
         </>
       )}
       {currentPage === 'components' && (
@@ -317,6 +320,7 @@ function App() {
             <div className="flex-grow"></div>
             <HomeFooter theme={theme} />
           </main>
+          <Chat theme={theme} />
         </>
       )}
       {currentPage === 'buttons' && (
@@ -343,6 +347,7 @@ function App() {
             <div className="flex-grow"></div>
             <Footer theme={theme} />
           </main>
+          <Chat theme={theme} />
         </>
       )}
       {currentPage === 'contact' && (
@@ -369,6 +374,7 @@ function App() {
             <div className="flex-grow"></div>
             <HomeFooter theme={theme} />
           </main>
+          <Chat theme={theme} />
         </>
       )}
     </div>
