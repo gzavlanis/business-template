@@ -1,0 +1,90 @@
+# .gitlab-ci.yml
+# This file defines the GitLab CI/CD pipeline for your React application.
+# It includes stages for building a Docker image and potentially deploying it.
+
+# Define the default Docker image to use for all jobs in this pipeline
+# This provides a consistent environment with Docker tools pre-installed.
+default:
+  image: docker:latest
+
+# Define global variables
+variables:
+  # Name of your Docker image. Replace 'your-gitlab-username/your-repo-name'
+  # with your actual GitLab Docker Registry path or other registry path.
+  # Example: DOCKER_IMAGE: registry.gitlab.com/your-username/your-project-name
+  DOCKER_IMAGE: $CI_REGISTRY_IMAGE
+  # Tag for the Docker image. CI_COMMIT_SHORT_SHA is a built-in GitLab variable
+  # that provides a short SHA of the commit, making tags unique.
+  DOCKER_TAG: $CI_COMMIT_SHORT_SHA
+  # Optional: latest tag for easy access to the most recent successful build
+  DOCKER_LATEST_TAG: latest
+
+# Define the stages of your CI/CD pipeline
+stages:
+  - build_image
+  - deploy # This stage is optional and depends on your deployment strategy
+
+# --- Build Docker Image Job ---
+build_docker_image:
+  stage: build_image # This job belongs to the 'build_image' stage
+  # Use 'docker:latest' with 'dind' (Docker in Docker) service for building images
+  image: docker:latest
+  services:
+    - docker:dind # Enable Docker in Docker service for this job
+  script:
+    - echo "Logging into Docker Registry..."
+    # Log in to the GitLab Container Registry
+    # CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY are built-in GitLab variables
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+
+    - echo "Building Docker image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
+    # Build the Docker image using the Dockerfile in the current directory
+    # -t: tag the image with a specific name and version
+    # .: build context is the current directory
+    - docker build -t "${DOCKER_IMAGE}:${DOCKER_TAG}" .
+    - docker build -t "${DOCKER_IMAGE}:${DOCKER_LATEST_TAG}" . # Tag with latest too
+
+    - echo "Pushing Docker image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
+    # Push the tagged Docker image to the registry
+    - docker push "${DOCKER_IMAGE}:${DOCKER_TAG}"
+    - docker push "${DOCKER_IMAGE}:${DOCKER_LATEST_TAG}"
+  only:
+    # This job will run only on 'main' branch commits and on tags
+    - main
+    - tags
+
+# --- Deploy Job (Example - Manual Deployment to a Generic Server) ---
+# This is a placeholder for your actual deployment logic.
+# You'll need to adapt this section significantly based on your hosting provider
+# (e.g., AWS, GCP, Azure, DigitalOcean, a private server).
+deploy_production:
+  stage: deploy # This job belongs to the 'deploy' stage
+  image: alpine/git:latest # A lightweight image with git and ssh client
+  before_script:
+    - apk add --no-cache openssh-client # Install openssh client for SSH connection
+    - chmod 600 "$SSH_PRIVATE_KEY" # Set correct permissions for the SSH key
+    - ssh-keyscan -H "$PRODUCTION_SERVER_IP" >> ~/.ssh/known_hosts # Add server to known hosts
+  script:
+    - echo "Deploying to production server..."
+    # SSH into your production server and pull the latest Docker image, then restart the container.
+    # Replace user@your-server-ip with your actual server access details.
+    # Replace 'your-app-container' with the name of your running Docker container.
+    - ssh -i "$SSH_PRIVATE_KEY" "$PRODUCTION_SERVER_USER@$PRODUCTION_SERVER_IP" "
+        docker login -u \\"$CI_REGISTRY_USER\\" -p \\"$CI_REGISTRY_PASSWORD\\" \\"$CI_REGISTRY\\" &&
+        docker pull ${DOCKER_IMAGE}:${DOCKER_LATEST_TAG} &&
+        docker stop your-app-container || true &&
+        docker rm your-app-container || true &&
+        docker run -d --name your-app-container -p 80:80 ${DOCKER_IMAGE}:${DOCKER_LATEST_TAG}
+      "
+    - echo "Deployment complete!"
+  environment:
+    name: production
+    url: http://your-app-domain.com # Replace with your application's public URL
+  only:
+    - main # Only deploy when changes are merged into the 'main' branch
+  when: manual # This job requires a manual trigger in GitLab CI/CD
+
+# --- Variables needed for Deployment Stage (set in GitLab CI/CD Settings > CI/CD > Variables) ---
+# SSH_PRIVATE_KEY: Your SSH private key content (File type variable)
+# PRODUCTION_SERVER_USER: The SSH username for your production server (Variable type)
+# PRODUCTION_SERVER_IP: The IP address or hostname of your production server (Variable type)
